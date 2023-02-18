@@ -1,0 +1,18 @@
+# cache directories
+*.DS_Store
+
+# webstorm project files
+.idea
+.idea/workspace.xml
+.idea/modules.xml
+.idea/*.iml
+.idea/dictionaries/
+.idea/dataSources/
+
+# node
+node_modules
+
+# project
+public/library.*
+build
+dist

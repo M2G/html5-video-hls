@@ -1,0 +1,63 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "strictNullChecks": true,
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true,
+    "strictPropertyInitialization": false,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "target": "es5",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "allowJs": true,
+    "checkJs": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "declaration": true,
+    "noImplicitReturns": false,
+    "removeComments": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitThis": false,
+    "noImplicitAny": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": true,
+    "importsNotUsedAsValues": "preserve", // this is important for proper files watching
+    "outDir": "./build",
+    "lib": [
+      "ES2015",
+      "ES2016",
+      "ES2017",
+      "ES2018",
+      "ES2019",
+      "ES2020",
+      "ESNext",
+      "dom"
+    ],
+    "rootDirs": ["src"],
+    "baseUrl": "./src",
+    "paths": {
+      "assets/*": ["assets/*"],
+      "styles/*": ["styles/*"]
+    }
+  },
+  "include": [
+    "./src"
+  ],
+  "exclude": [
+    "**/__tests__/*",
+    "node_modules",
+    "dist",
+    "build",
+    "node_modules",
+    "config",
+    "webpack",
+    "jest"
+  ],
+  "files": [
+    "custom.d.ts"
+  ],
+  "compileOnSave": false,
+  "buildOnSave": false
+}
