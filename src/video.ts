@@ -14,7 +14,7 @@ const hlsConfig = {
   enableWorker: true,
 };
 
-const url = 'http://amssamples.streaming.mediaservices.windows.net/634cd01c-6822-4630-8444-8dd6279f94c6/CaminandesLlamaDrama4K.ism/manifest(format=m3u8-aapl)';
+const url = 'http://sample.vodobox.com/skate_phantom_flex_4k/skate_phantom_flex_4k.m3u8';
 
 function codecs2label(levelCodecs) {
   if (levelCodecs) {
@@ -62,6 +62,9 @@ class Video extends Component {
     hls.loadSource(url);
     hls.attachMedia(elem as HTMLMediaElement);
 
+    const button = document.createElement("button");
+    button.innerText = "auto2";
+
 
     function getLevelButtonHtml(key, levels, onclickReplace, autoEnabled) {
       const onclickAuto = `${key}=-1`.replace(/^(\w+)=([^=]+)$/, onclickReplace);
@@ -72,6 +75,17 @@ class Video extends Component {
         }
         return uniqueCodecs;
       }, []);
+
+      const onclickAuto2 = `${key}=2`.replace(/^(\w+)=([^=]+)$/, onclickReplace);
+
+      button.addEventListener("click", () => {
+        console.log('zzzzzzzzzz');
+        hls.currentLevel = 2;
+      })
+
+      document.querySelector('#app').appendChild(button);
+
+      //@TODO rm and use DOM create elem
       return (
         `<button type="button" class="btn btn-sm ${
           autoEnabled ? 'btn-primary' : 'btn-success'
@@ -80,7 +94,13 @@ class Video extends Component {
           .map((level, i) => {
             const enabled = hls[key] === i;
             const onclick = `${key}=${i}`.replace(/^(\w+)=(\w+)$/, onclickReplace);
+
+            console.log('onclick', onclick)
+
             const label = level2label(levels[i], i, codecs);
+
+            console.log('label', label)
+
             return `<button type="button" class="btn btn-sm ${
               enabled ? 'btn-primary' : 'btn-success'
             }" onclick="${onclick}">${label}</button>`;
@@ -99,23 +119,13 @@ class Video extends Component {
         'currentLevel',
         levels,
         'hls.$1=$2',
-        hls.autoLevelEnabled
+        hls.autoLevelEnabled,
       );
-      const htmlNextLevel = getLevelButtonHtml('nextLevel', levels, 'hls.$1=$2', hls.autoLevelEnabled);
-      const htmlLoadLevel = getLevelButtonHtml('loadLevel', levels, 'hls.$1=$2', hls.autoLevelEnabled);
+
+      console.log('htmlCurrentLevel htmlCurrentLevel', htmlCurrentLevel)
 
       if (document.querySelector('#currentLevelControl').innerHTML !== htmlCurrentLevel) {
-        console.log('zzzzzzzz', document.querySelector('#currentLevelControl'))
-
         document.querySelector('#currentLevelControl').innerHTML = htmlCurrentLevel;
-      }
-
-      if (document.querySelector('#nextLevelControl').innerHTML !== htmlNextLevel) {
-        document.querySelector('#nextLevelControl').innerHTML = htmlNextLevel;
-      }
-
-      if (document.querySelector('#loadLevelControl').innerHTML !== htmlLoadLevel) {
-        document.querySelector('#loadLevelControl').innerHTML = htmlLoadLevel;
       }
     }
 
