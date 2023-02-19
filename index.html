@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>test</title>
+</head>
+<body>
+<div id="app">
+    <video
+            id="video"
+            controls
+            autoplay
+            style="width: 100%"
+            muted></video>
+  <div
+    class="center demo-tab"
+    id="qualityLevelControlTab"
+  >
+    <center>
+      <table>
+        <tr>
+          <td>
+            <p>Currently played level:</p>
+          </td>
+          <td>
+            <div id="currentLevelControl" style="display: inline"></div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p>Next level loaded:</p>
+          </td>
+          <td>
+            <div id="nextLevelControl" style="display: inline"></div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p>Currently loaded level:</p>
+          </td>
+          <td>
+            <div id="loadLevelControl" style="display: inline"></div>
+          </td>
+        </tr>
+      </table>
+    </center>
+  </div>
+
+</div>
+<script type="module" src="/src/index.ts"></script>
+</body>
+</html>

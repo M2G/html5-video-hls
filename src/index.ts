@@ -1,7 +1,6 @@
-import 'styles/style.scss';
+import Video from './video';
+import './index.scss';
 
-function ok() {
-  return false;
-}
+const elem = document.getElementById('video');
 
-console.log('ok', ok());
+if (elem) Video.create(elem, []);
