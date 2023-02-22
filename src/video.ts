@@ -88,8 +88,8 @@ class Video extends Component {
     hls.loadSource(url);
     hls.attachMedia(elem as HTMLMediaElement);
 
-    const button = document.createElement('button');
-    button.innerText = 'Auto';
+    const buttonAuto = document.createElement('button');
+    buttonAuto.innerText = 'Auto';
 
     function removeAllChildNodes(parent) {
       while (parent.firstChild) {
@@ -114,24 +114,32 @@ class Video extends Component {
       }, []);
 
 
-      button.addEventListener('click', () => {
+      buttonAuto.addEventListener('click', () => {
         console.log('addEventListener');
         hls.currentLevel = -1;
       });
 
-      div.appendChild(button);
+      div.appendChild(buttonAuto);
       videoWrapper.appendChild(div);
 
 
       levels.map((level, i) => {
         const enabled = hls[key] === i;
         const label = level2label(levels[i], i, codecs);
-        const button2 = document.createElement('button');
-        button2.addEventListener('click', () => {
+        const buttonLevel = document.createElement('button');
+        buttonLevel.innerText = label;
+        buttonLevel.addEventListener('click', () => {
           console.log('addEventListener');
           hls.currentLevel = i;
         });
-        button2.innerText = label;
+
+        console.log('buttonLevel', div)
+
+        if ((levels.length + 1) === div.children.length) return;
+
+        div.appendChild(buttonLevel);
+        videoWrapper.appendChild(div);
+
       });
 
       /*
@@ -171,10 +179,6 @@ class Video extends Component {
       );
 
       console.log('htmlCurrentLevel htmlCurrentLevel', htmlCurrentLevel);
-
-      /*if (document.querySelector('#currentLevelControl').innerHTML !== htmlCurrentLevel) {
-        document.querySelector('#currentLevelControl').innerHTML = htmlCurrentLevel;
-      }*/
     }
 
     hls.on(Hls.Events.LEVEL_SWITCHING, (eventName, data) => {
