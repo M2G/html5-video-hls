@@ -99,27 +99,19 @@ class Video extends Component {
     div.id = 'qualityLevelControlTab';
 
     function getLevelButtonHtml(key, levels, onclickReplace, autoEnabled) {
-      /*
-        `<button type="button" class="btn btn-sm ${
-          autoEnabled ? 'btn-primary' : 'btn-success'
-        }" onclick="${onclickAuto}">auto</button>` +
-        levels
-          .map((level, i) => {
-            const enabled = hls[key] === i;
-            const onclick = `${key}=${i}`.replace(/^(\w+)=(\w+)$/, onclickReplace);
+      for (let i = 0; i < div.children.length; i += 1) {
+        const enabled = hls[key] === i;
+        if (div.children?.[i + 1]?.classList?.contains('active')) {
+          div.children?.[i + 1]?.classList?.remove('active');
+        }
 
-            console.log('onclick', onclick)
-
-            const label = level2label(levels[i], i, codecs);
-
-            console.log('label', label)
-
-            return `<button type="button" class="btn btn-sm ${
-              enabled ? 'btn-primary' : 'btn-success'
-            }" onclick="${onclick}">${label}</button>`;
-          })
-          .join('')
-      ); */
+        if (autoEnabled) {
+          div.children?.[0]?.classList?.add('active');
+        } else if (enabled) {
+          div.children?.[0]?.classList?.remove('active');
+          div.children?.[i + 1].classList.add('active');
+        }
+      }
     }
 
     function updateLevelInfo() {
@@ -128,14 +120,12 @@ class Video extends Component {
         return;
       }
 
-      const htmlCurrentLevel = getLevelButtonHtml(
+      getLevelButtonHtml(
         'currentLevel',
         levels,
         'hls.$1=$2',
         hls.autoLevelEnabled
       );
-
-      console.log('htmlCurrentLevel htmlCurrentLevel', htmlCurrentLevel);
     }
 
     hls.on(Hls.Events.LEVEL_SWITCHING, (eventName, data) => {
@@ -182,21 +172,18 @@ class Video extends Component {
         });
         */
 
-        console.log('buttonLevel', div);
-
         div.appendChild(buttonLevel);
         videoWrapper.appendChild(div);
 
         updateLevelInfo();
       });
 
-      div.addEventListener('click', ({target}) => {
+      div.addEventListener('click', ({ target }) => {
         console.log('addEventListener', target.dataset.id);
         hls.currentLevel = target.dataset.id;
       });
 
       console.log('-----------------', hls[key]);
-
     });
 
     hls.on(Hls.Events.FRAG_BUFFERED, (eventName, data) => {
