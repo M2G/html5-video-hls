@@ -10,7 +10,7 @@ const CLICK = 'click';
 const defaults = {};
 
 const hlsConfig = {
-  debug: true,
+  debug: false,
   enableWorker: true,
 };
 
@@ -26,12 +26,12 @@ function wrap(wrapper, elms) {
     elms = [elms];
   }
 
-  for (var i = elms.length - 1; i >= 0; i--) {
-    var child = i > 0 ? wrapper.cloneNode(true) : wrapper;
-    var el = elms[i];
+  for (let i = elms.length - 1; i >= 0; i--) {
+    const child = i > 0 ? wrapper.cloneNode(true) : wrapper;
+    const el = elms[i];
 
-    var parent = el.parentNode;
-    var sibling = el.nextSibling;
+    const parent = el.parentNode;
+    const sibling = el.nextSibling;
 
     child.appendChild(el);
 
@@ -82,9 +82,6 @@ class Video extends Component {
     }
 
     const hls = new Hls(hlsConfig);
-
-    console.log('hls', hls);
-
     hls.loadSource(url);
     hls.attachMedia(elem as HTMLMediaElement);
 
@@ -98,50 +95,50 @@ class Video extends Component {
     const div = document.createElement('div');
     div.id = 'qualityLevelControlTab';
 
-    function getLevelButtonHtml(key, levels, onclickReplace, autoEnabled) {
-      for (let i = 0; i < div.children.length; i += 1) {
+    function getLevelButtonHtml(key, levels, autoEnabled) {
+      for (let i = 0; i < levels.length; i += 1) {
         const enabled = hls[key] === i;
-        if (div.children?.[i + 1]?.classList?.contains('active')) {
-          div.children?.[i + 1]?.classList?.remove('active');
+        if (div.children[i + 1]?.classList.contains('active')) {
+          div.children[i + 1]?.classList.remove('active');
         }
 
+        console.log('autoEnabled', autoEnabled);
+        console.log('enabled', { enabled, i, hlsKey: hls[key], hls });
+
         if (autoEnabled) {
-          div.children?.[0]?.classList?.add('active');
+          div.children[0]?.classList.add('active');
         } else if (enabled) {
-          div.children?.[0]?.classList?.remove('active');
-          div.children?.[i + 1].classList.add('active');
+          div.children[0]?.classList.remove('active');
+          div.children[i + 1]?.classList.add('active');
         }
       }
     }
 
     function updateLevelInfo() {
-      const { levels } = hls;
+      const { levels, autoLevelEnabled } = hls;
       if (!levels) {
         return;
       }
 
-      getLevelButtonHtml(
-        'currentLevel',
-        levels,
-        'hls.$1=$2',
-        hls.autoLevelEnabled
-      );
+      getLevelButtonHtml('currentLevel', levels, autoLevelEnabled);
     }
 
     hls.on(Hls.Events.LEVEL_SWITCHING, (eventName, data) => {
-      console.log('LEVEL_SWITCHING');
       updateLevelInfo();
     });
 
     hls.on(Hls.Events.MANIFEST_PARSED, (eventName, data) => {
+      console.info(`${hls.levels.length} quality levels found`);
+      console.info('Manifest successfully loaded');
+      console.info({
+        levelNb: data.levels.length,
+        levelParsed: 0,
+      });
+
       const { levels } = hls;
       if (!levels) {
         return;
       }
-
-      console.log('MANIFEST_PARSED');
-
-      const key = 'currentLevel';
 
       const codecs = levels.reduce((uniqueCodecs, level) => {
         const levelCodecs = codecs2label(level.attrs.CODECS);
@@ -152,53 +149,38 @@ class Video extends Component {
       }, []);
 
       buttonAuto.addEventListener('click', () => {
-        console.log('addEventListener');
         hls.currentLevel = -1;
       });
 
       div.appendChild(buttonAuto);
       videoWrapper.appendChild(div);
 
-      levels.map((level, i) => {
-        const enabled = hls[key] === i;
+      console.log('levels', levels);
+
+      for (let i = 0; i < levels.length; i += 1) {
         const label = level2label(levels[i], i, codecs);
         const buttonLevel = document.createElement('button');
         buttonLevel.innerText = label;
-        buttonLevel.dataset.id = i;
-        /*
-        buttonLevel.addEventListener('click', () => {
-          console.log('addEventListener');
-          hls.currentLevel = i;
-        });
-        */
+        buttonLevel.dataset.id = String(i);
 
         div.appendChild(buttonLevel);
         videoWrapper.appendChild(div);
+      }
 
-        updateLevelInfo();
+      div.addEventListener('click', (e: MouseEvent) => {
+        const { id } = (e.target as HTMLButtonElement).dataset;
+
+        console.log('id', id);
+
+        hls.currentLevel = id;
       });
-
-      div.addEventListener('click', ({ target }) => {
-        console.log('addEventListener', target.dataset.id);
-        hls.currentLevel = target.dataset.id;
-      });
-
-      console.log('-----------------', hls[key]);
     });
 
-    hls.on(Hls.Events.FRAG_BUFFERED, (eventName, data) => {
-      console.log('FRAG_BUFFERED');
-      updateLevelInfo();
-    });
-
-    hls.on(Hls.Events.LEVEL_SWITCHED, (eventName, data) => {
-      console.log('LEVEL_SWITCHED');
-      updateLevelInfo();
-    });
-
-    hls.on(Hls.Events.FRAG_CHANGED, (eventName, data) => {
-      console.log('FRAG_CHANGED');
-      updateLevelInfo();
+    hls.on(Hls.Events.FRAG_BUFFERED, updateLevelInfo);
+    hls.on(Hls.Events.LEVEL_SWITCHED, updateLevelInfo);
+    hls.on(Hls.Events.FRAG_CHANGED, updateLevelInfo);
+    hls.on(Hls.Events.ERROR, (eventName, data) => {
+      console.warn('Error event:', data);
     });
   }
 
@@ -209,6 +191,10 @@ class Video extends Component {
   static create(elem, options) {
     return super.create(this, elem, options);
   }
+
+  destroy() {}
+
+  qualityControl() {}
 }
 
 export default Video;
