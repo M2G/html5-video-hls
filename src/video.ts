@@ -72,7 +72,7 @@ function level2label(level, i, manifestCodecs) {
 }
 
 class Video extends Component {
-  public constructor(elem, params) {
+  public constructor(elem: HTMLMediaElement, params: any) {
     super(Video, elem, params);
     console.log('video', elem);
 
@@ -83,7 +83,7 @@ class Video extends Component {
 
     const hls = new Hls(hlsConfig);
     hls.loadSource(url);
-    hls.attachMedia(elem as HTMLMediaElement);
+    hls.attachMedia(elem);
 
     const buttonAuto = document.createElement('button');
     buttonAuto.innerText = 'Auto';
@@ -96,14 +96,15 @@ class Video extends Component {
     div.id = 'qualityLevelControlTab';
 
     function getLevelButtonHtml(key, levels, autoEnabled) {
+      console.log('hlsKey', hls[key]);
       for (let i = 0; i < levels.length; i += 1) {
         const enabled = hls[key] === i;
         if (div.children[i + 1]?.classList.contains('active')) {
           div.children[i + 1]?.classList.remove('active');
         }
 
-        console.log('autoEnabled', autoEnabled);
-        console.log('enabled', { enabled, i, hlsKey: hls[key], hls });
+        //console.log('autoEnabled', autoEnabled);
+        //console.log('enabled', { enabled, i, hlsKey: hls[key], hls });
 
         if (autoEnabled) {
           div.children[0]?.classList.add('active');
@@ -170,7 +171,7 @@ class Video extends Component {
       div.addEventListener('click', (e: MouseEvent) => {
         const { id } = (e.target as HTMLButtonElement).dataset;
 
-        console.log('id', id);
+        console.log('-------------------------------------', id);
 
         hls.currentLevel = id;
       });
@@ -179,6 +180,7 @@ class Video extends Component {
     hls.on(Hls.Events.FRAG_BUFFERED, updateLevelInfo);
     hls.on(Hls.Events.LEVEL_SWITCHED, updateLevelInfo);
     hls.on(Hls.Events.FRAG_CHANGED, updateLevelInfo);
+    hls.on(Hls.Events.FRAG_PARSING_METADATA, updateLevelInfo);
     hls.on(Hls.Events.ERROR, (eventName, data) => {
       console.warn('Error event:', data);
     });
