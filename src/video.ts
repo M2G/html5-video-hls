@@ -1,4 +1,5 @@
 import Hls from 'hls.js/dist/hls.min';
+import { Level } from '../node_modules/hls.js/src/types/level.ts';
 import './styles/style.scss';
 
 import Component from './component';
@@ -12,6 +13,7 @@ const defaults = {};
 const hlsConfig = {
   debug: false,
   enableWorker: true,
+  lowLatencyMode: true,
 };
 
 const url = 'http://sample.vodobox.com/skate_phantom_flex_4k/skate_phantom_flex_4k.m3u8';
@@ -72,9 +74,13 @@ function level2label(level, i, manifestCodecs) {
 }
 
 class Video extends Component {
+  private _levels: Level[] = [];
+  private _firstLevel: number = -1;
+  private _startLevel?: number;
+  private currentLevelIndex: number = -1;
+  private manualLevelIndex: number = -1;
   public constructor(elem: HTMLMediaElement, params: any) {
     super(Video, elem, params);
-    console.log('video', elem);
 
     if (!Hls.isSupported()) {
       console.error('Not supported');
@@ -97,6 +103,7 @@ class Video extends Component {
 
     function getLevelButtonHtml(key, levels, autoEnabled) {
       console.log('hlsKey', hls[key]);
+      console.log('autoEnabled', autoEnabled);
       for (let i = 0; i < levels.length; i += 1) {
         const enabled = hls[key] === i;
         if (div.children[i + 1]?.classList.contains('active')) {
@@ -106,12 +113,14 @@ class Video extends Component {
         //console.log('autoEnabled', autoEnabled);
         //console.log('enabled', { enabled, i, hlsKey: hls[key], hls });
 
-        if (autoEnabled) {
+      /*  if (autoEnabled) {
           div.children[0]?.classList.add('active');
-        } else if (enabled) {
+        }
+
+        if (enabled) {
           div.children[0]?.classList.remove('active');
           div.children[i + 1]?.classList.add('active');
-        }
+        }*/
       }
     }
 
@@ -149,9 +158,11 @@ class Video extends Component {
         return uniqueCodecs;
       }, []);
 
+      /*
       buttonAuto.addEventListener('click', () => {
         hls.currentLevel = -1;
       });
+      */
 
       div.appendChild(buttonAuto);
       videoWrapper.appendChild(div);
@@ -168,13 +179,13 @@ class Video extends Component {
         videoWrapper.appendChild(div);
       }
 
-      div.addEventListener('click', (e: MouseEvent) => {
+      /* div.addEventListener('click', (e: MouseEvent) => {
         const { id } = (e.target as HTMLButtonElement).dataset;
 
         console.log('-------------------------------------', id);
 
         hls.currentLevel = id;
-      });
+      }); */
     });
 
     hls.on(Hls.Events.FRAG_BUFFERED, updateLevelInfo);
@@ -185,6 +196,12 @@ class Video extends Component {
       console.warn('Error event:', data);
     });
   }
+
+  private _registerListeners() {}
+
+  private _unregisterListeners() {}
+
+  public destroy() {}
 
   static get defaults() {
     return defaults;
