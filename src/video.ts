@@ -2,11 +2,8 @@ import Hls from 'hls.js/dist/hls.min';
 import { Events } from 'hls.js/src/events';
 import type { Level } from 'hls.js/src/types/level';
 import type { LevelSwitchingData, ErrorData, ManifestLoadedData } from 'hls.js/src/types/events';
-import './styles/style.scss';
-
 import Component from './component';
-
-const visibleClass = 'is-hidden';
+import './styles/style.scss';
 
 const CLICK = 'click';
 
@@ -25,7 +22,7 @@ const url = 'http://sample.vodobox.com/skate_phantom_flex_4k/skate_phantom_flex_
  * Modified global function based on Kevin Jurkowski's implementation
  * here: http://stackoverflow.com/questions/3337587/wrapping-a-dom-element-using-pure-javascript/13169465#13169465
  */
-function wrap(wrapper, elms) {
+function wrap(wrapper: HTMLDivElement, elms: any[] | string) {
   if (!elms.length) {
     elms = [elms];
   }
@@ -47,7 +44,7 @@ function wrap(wrapper, elms) {
   }
 }
 
-function codecs2label(levelCodecs) {
+function codecs2label(levelCodecs: string) {
   if (levelCodecs) {
     return levelCodecs.replace(/([ah]vc.)[^,;]+/, '$1').replace('mp4a.40.2', 'mp4a');
   }
@@ -87,6 +84,7 @@ class Video extends Component {
   private readonly manualLevelIndex = -1;
 
   private hls: any;
+
   private div: HTMLDivElement;
 
   public constructor(elem: HTMLMediaElement, params: any) {
@@ -130,14 +128,16 @@ class Video extends Component {
     this.hls.off(Events.LEVEL_SWITCHED, this.onLevelSwitched.bind(this));
     this.hls.off(Events.ERROR, this.onError.bind(this));
   }
+
   protected onLevelSwitched(event: Events.LEVEL_SWITCHED, data: LevelSwitchingData): void {
-    const { currentLevel } = this.hls;
+    const { currentLevel }: { currentLevel: number } = this.hls;
     console.log('hls.currentLevel AFTER', currentLevel);
     this.div.children[currentLevel + 1]?.classList.add('active');
   }
 
   protected onLevelSwitching(event: Events.LEVEL_SWITCHING, data: LevelSwitchingData): void {
-    const { autoLevelEnabled, currentLevel } = this.hls;
+    const { autoLevelEnabled, currentLevel }: { autoLevelEnabled: string; currentLevel: number } =
+      this.hls;
 
     console.log('updateLevelInfo', { autoLevelEnabled, currentLevel });
 
@@ -148,7 +148,6 @@ class Video extends Component {
     }
 
     console.log('hls.currentLevel BEFORE', currentLevel);
-    console.log('hls.currentLevel BEFORE', this.div.children[currentLevel + 1]);
     if (this.div.children[currentLevel + 1]?.classList.contains('active')) {
       this.div.children[currentLevel + 1]?.classList.remove('active');
     }
@@ -172,17 +171,16 @@ class Video extends Component {
     wrap(videoWrapper, this.elem);
 
     this.div = document.createElement('div');
-    this.div.id = 'qualityLevelControlTab';
 
     const codecs = levels.reduce(
-      (uniqueCodecs: readonly any[], level: { readonly attrs: { CODECS: any } }) => {
-        const levelCodecs = codecs2label(level.attrs.CODECS);
+      (uniqueCodecs: readonly string[], level: { readonly attrs: { CODECS: any } }) => {
+        const levelCodecs: string = codecs2label(level.attrs.CODECS);
         if (uniqueCodecs?.includes(levelCodecs)) {
           uniqueCodecs.push(levelCodecs);
         }
         return uniqueCodecs;
       },
-      []
+      [],
     );
 
     buttonAuto.addEventListener(CLICK, () => {
