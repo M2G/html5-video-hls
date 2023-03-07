@@ -180,7 +180,7 @@ class Video extends Component {
         }
         return uniqueCodecs;
       },
-      [],
+      []
     );
 
     buttonAuto.addEventListener(CLICK, () => {
