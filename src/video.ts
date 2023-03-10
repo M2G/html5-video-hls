@@ -73,16 +73,6 @@ function level2label(level, i, manifestCodecs) {
 }
 
 class Video extends Component {
-  private readonly _levels: Level[] = [];
-
-  private readonly _firstLevel = -1;
-
-  private readonly _startLevel?: number;
-
-  private readonly currentLevelIndex = -1;
-
-  private readonly manualLevelIndex = -1;
-
   private hls: any;
 
   private div: HTMLDivElement;
@@ -120,6 +110,16 @@ class Video extends Component {
     this.hls.on(Events.LEVEL_SWITCHING, this.onLevelSwitching.bind(this));
     this.hls.on(Events.LEVEL_SWITCHED, this.onLevelSwitched.bind(this));
     this.hls.on(Events.ERROR, this.onError.bind(this));
+
+
+    console.log('---------', this.elem)
+
+
+
+
+
+
+
   }
 
   private #unregisterListeners() {
@@ -143,9 +143,10 @@ class Video extends Component {
 
     if (autoLevelEnabled) {
       this.div.children[0]?.classList.add('active');
-    } else {
-      this.div.children[0]?.classList.remove('active');
+      return;
     }
+
+    this.div.children[0]?.classList.remove('active');
 
     console.log('hls.currentLevel BEFORE', currentLevel);
     if (this.div.children[currentLevel + 1]?.classList.contains('active')) {
