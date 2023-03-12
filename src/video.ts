@@ -111,15 +111,7 @@ class Video extends Component {
     this.hls.on(Events.LEVEL_SWITCHED, this.onLevelSwitched.bind(this));
     this.hls.on(Events.ERROR, this.onError.bind(this));
 
-
-    console.log('---------', this.elem)
-
-
-
-
-
-
-
+    console.log('---------', this.elem);
   }
 
   private #unregisterListeners() {
@@ -174,7 +166,10 @@ class Video extends Component {
     this.div = document.createElement('div');
 
     const codecs = levels.reduce(
-      (uniqueCodecs: readonly string[], level: { readonly attrs: { CODECS: any } }) => {
+      (
+        uniqueCodecs: string[] | readonly string[],
+        level: { readonly attrs: { readonly CODECS: string } }
+      ) => {
         const levelCodecs: string = codecs2label(level.attrs.CODECS);
         if (uniqueCodecs?.includes(levelCodecs)) {
           uniqueCodecs.push(levelCodecs);
@@ -200,7 +195,9 @@ class Video extends Component {
       buttonLevel.dataset.id = String(i);
 
       this.div.appendChild(buttonLevel);
-      videoWrapper.appendChild(this.div);
+
+      // @TODO temparally, i will create programmatically, video control
+      document.querySelector('#quality-control').appendChild(this.div);
     }
 
     this.div.addEventListener(CLICK, (e: MouseEvent) => {

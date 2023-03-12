@@ -296,3 +296,45 @@ svg {
   stroke: #fff;
   cursor: pointer;
 }
+
+// popover
+// https://codepen.io/kallmanation/pen/gOrPjNO
+/* popover */
+.parameter-button {
+  pointer-events: none;
+}
+
+details[data-popover] {
+  cursor: pointer;
+  display: inline;
+  position: relative;
+}
+details[data-popover] > summary:focus {
+  outline: none;
+}
+details[data-popover] > summary::-webkit-details-marker {
+  display: none;
+}
+details[data-popover] > summary {
+  list-style: none;
+  text-decoration: underline dotted teal;
+}
+details[data-popover] > summary + * {
+  position: absolute;
+  display: block;
+  z-index: 1;
+  width: 350%;
+  border: solid 1px teal;
+  border-radius: 5%;
+  padding: 10px;
+  background: white;
+}
+details[data-popover] > * + * {
+  /* hide detail elements that would ruin the popover */
+  display: none;
+}
+details[data-popover="up"] > summary + * {
+  bottom: calc(0.5rem + 100%);
+  right: 50%;
+  transform: translateX(50%);
+}
