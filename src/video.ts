@@ -76,6 +76,7 @@ class Video extends Component {
   private hls: any;
 
   private div: HTMLDivElement;
+  private currentLevel: number;
 
   public constructor(elem: HTMLMediaElement, params: any) {
     super(Video, elem, params);
@@ -85,6 +86,7 @@ class Video extends Component {
       return;
     }
 
+    this.currentLevel = null;
     this.elem = elem;
     this.hls = new Hls(hlsConfig);
     this.hls.loadSource(url);
@@ -123,6 +125,10 @@ class Video extends Component {
 
   protected onLevelSwitched(event: Events.LEVEL_SWITCHED, data: LevelSwitchingData): void {
     const { currentLevel }: { currentLevel: number } = this.hls;
+
+    console.log('level level level 1', this.currentLevel);
+    this.currentLevel = currentLevel;
+    console.log('level level level 2', this.currentLevel);
     console.log('hls.currentLevel AFTER', currentLevel);
     this.div.children[currentLevel + 1]?.classList.add('active');
   }
@@ -139,8 +145,8 @@ class Video extends Component {
     }
 
     this.div.children[0]?.classList.remove('active');
-
     console.log('hls.currentLevel BEFORE', currentLevel);
+
     if (this.div.children[currentLevel + 1]?.classList.contains('active')) {
       this.div.children[currentLevel + 1]?.classList.remove('active');
     }
